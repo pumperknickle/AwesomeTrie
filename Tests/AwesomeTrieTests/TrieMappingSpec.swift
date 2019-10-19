@@ -67,5 +67,21 @@ final class TrieMappingSpec: QuickSpec {
                 expect(map1Subtree[key3 - key1]).toNot(beNil())
             }
         }
+		describe("supertree") {
+            let map1Including = map1.including(keys: key1)
+			let map1Supertree = map1Including.supertree(keys: key1)
+			it("should contain extended keys 1, 2, and 3") {
+				expect(map1Supertree[key1 + key1]).toNot(beNil())
+				expect(map1Supertree[key1 + key2]).toNot(beNil())
+				expect(map1Supertree[key1 + key3]).toNot(beNil())
+			}
+			let map1Subtree = map1Including.subtree(keys: key1)
+			let map1Super = map1Subtree.supertree(keys: key1)
+			it("should contain key 2 and 3") {
+				expect(map1Super.elements().count).to(equal(2))
+                expect(map1Super[key2]).toNot(beNil())
+                expect(map1Super[key3]).toNot(beNil())
+			}
+		}
     }
 }

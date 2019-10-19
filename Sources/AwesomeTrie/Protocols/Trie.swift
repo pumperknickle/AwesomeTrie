@@ -21,6 +21,7 @@ public protocol Trie: Codable {
     func including(keys: [Key]) -> Self
     func excluding(keys: [Key]) -> Self
     func subtree(keys: [Key]) -> Self
+	func supertree(keys: [Key]) -> Self
     
     init(children: Mapping<Key, NodeType>)
     init()
@@ -94,9 +95,19 @@ public extension Trie {
     }
     
     func subtree(keys: [Key]) -> Self {
-        guard let firstKey = keys.first else { return Self(children: Mapping<Key, NodeType>()) }
+        guard let firstKey = keys.first else { return self }
         guard let childNode = children[firstKey] else { return Self(children: Mapping<Key, NodeType>()) }
         guard let childResult = childNode.subtree(keys: keys) else { return Self(children: Mapping<Key, NodeType>()) }
         return Self(children: childResult)
     }
+
+	func supertree(keys: [Key]) -> Self {
+		guard let firstKey = keys.first else { return self }
+		guard let firstChild = children.first() else { return self }
+		if children.deleting(key: firstChild.0).first() == nil {
+			let childNode = firstChild.1.changing(prefix: keys + firstChild.1.prefix)
+			return Self(children: Mapping<Key, NodeType>().setting(key: firstKey, value: childNode))
+		}
+		return Self(children: Mapping<Key, NodeType>().setting(key: firstKey, value: NodeType(prefix: keys, value: nil, children: children)))
+	}
 }
