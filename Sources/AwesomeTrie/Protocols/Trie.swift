@@ -22,6 +22,7 @@ public protocol Trie: Codable {
     func excluding(keys: [Key]) -> Self
     func subtree(keys: [Key]) -> Self
 	func supertree(keys: [Key]) -> Self
+	func overwrite(with trie: Self) -> Self
     
     init(children: Mapping<Key, NodeType>)
     init()
@@ -109,5 +110,9 @@ public extension Trie {
 			return Self(children: Mapping<Key, NodeType>().setting(key: firstKey, value: childNode))
 		}
 		return Self(children: Mapping<Key, NodeType>().setting(key: firstKey, value: NodeType(prefix: keys, value: nil, children: children)))
+	}
+	
+	func overwrite(with trie: Self) -> Self {
+		return Self(children: children.overwrite(with: trie.children))
 	}
 }

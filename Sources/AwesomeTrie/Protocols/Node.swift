@@ -16,6 +16,7 @@ public protocol Node: Codable {
     func including(keys: [Key]) -> Self?
     func excluding(keys: [Key]) -> Self?
     func subtree(keys: [Key]) -> Mapping<Key, Self>?
+	func overwrite(with node: Self) -> Self
     
     init(prefix: [Key], value: Value?, children: Mapping<Key, Self>)
 }
@@ -134,4 +135,46 @@ public extension Node {
         guard let child = children[firstSuffix] else { return nil }
         return child.subtree(keys: suffix)
     }
+	
+	func overwrite(with node: Self) -> Self {
+		if node.prefix.starts(with: prefix) && prefix.count == node.prefix.count {
+			return Self(prefix: prefix, value: node.value ?? value, children: children.overwrite(with: node.children))
+		}
+		if prefix.starts(with: node.prefix) {
+			let suffix = prefix - node.prefix
+			let firstSuffix = suffix.first!
+			guard let currentChild = node.children[firstSuffix] else {
+				let newChildren = node.children.setting(key: firstSuffix, value: changing(prefix: suffix))
+				return node.changing(children: newChildren)
+			}
+			let newChildren = node.children.setting(key: firstSuffix, value: changing(prefix: suffix).overwrite(with: currentChild))
+			return node.changing(children: newChildren)
+		}
+		if node.prefix.starts(with: prefix) {
+			let suffix = node.prefix - prefix
+			let firstSuffix = suffix.first!
+			guard let currentChild = children[firstSuffix] else {
+				let newChildren = children.setting(key: firstSuffix, value: node.changing(prefix: suffix))
+				return changing(children: newChildren)
+			}
+			let newChildren = children.setting(key: firstSuffix, value: node.changing(prefix: suffix).overwrite(with: currentChild))
+			return changing(children: newChildren)
+		}
+		let commonPrefix = node.prefix ~> prefix
+		let nodeSuffix = node.prefix - commonPrefix
+		let suffix = prefix - commonPrefix
+		return Self(prefix: commonPrefix, value: nil, children: Mapping<Key, Self>().setting(key: nodeSuffix.first!, value: node.changing(prefix: nodeSuffix)).setting(key: suffix.first!, value: changing(prefix: suffix)))
+	}
+}
+
+extension Mapping where Key: BinaryEncodable, Value: Node {
+	func overwrite(with map: Self) -> Self {
+		if ((self.trueNode == nil) != (map.trueNode == nil) && (self.falseNode == nil) != (map.falseNode == nil)) {
+			return Self(trueNode: self.trueNode ?? map.trueNode!, falseNode: self.falseNode ?? map.falseNode!)
+		}
+		return elements().reduce(map) { (result, entry) -> Self in
+			guard let exisingElement = result[entry.0] else { return result.setting(key: entry.0, value: entry.1) }
+			return result.setting(key: entry.0, value: exisingElement.overwrite(with: entry.1))
+		}
+	}
 }

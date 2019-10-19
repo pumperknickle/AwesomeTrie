@@ -83,5 +83,18 @@ final class TrieMappingSpec: QuickSpec {
                 expect(map1Super[key3]).toNot(beNil())
 			}
 		}
+		let someMapping = TrieMapping<String, String>()
+		let v1 = "hello"
+		let v2 = "world"
+		let v3 = "hello world"
+		let map3 = someMapping.setting(keys: key1, value: v1).setting(keys: key2, value: v2)
+		let map4 = someMapping.setting(keys: key2, value: v1).setting(keys: key3, value: v3)
+		describe("overwriting") {
+			let overwritten = map3.overwrite(with: map4)
+			expect(overwritten[key1]).to(equal(v1))
+			expect(overwritten[key2]).to(equal(v1))
+			expect(overwritten[key3]).to(equal(v3))
+
+		}
     }
 }
