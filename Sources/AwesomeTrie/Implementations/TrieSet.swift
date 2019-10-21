@@ -10,7 +10,7 @@ public struct TrieSet<Key: BinaryEncodable>: Codable where Key: Codable {
     }
 }
 
-extension TrieSet: Set {
+extension TrieSet: UniqueGroup {
     public typealias NodeType = TrieNode<Key, Singleton>
 
     public var children: Mapping<Key, TrieNode<Key, Value>>! { return rawChildren }

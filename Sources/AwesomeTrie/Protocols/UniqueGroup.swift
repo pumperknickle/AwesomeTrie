@@ -1,13 +1,13 @@
 import Foundation
 
-public protocol Set: Trie where Value == Singleton {
+public protocol UniqueGroup: Trie where Value == Singleton {
     func contains(_ keys: [Key]) -> Bool
     func adding(_ keys: [Key]) -> Self
     func removing(_ keys: [Key]) -> Self
     func toArray() -> [[Key]]
 }
 
-public extension Set {
+public extension UniqueGroup {
     func contains(_ keys: [Key]) -> Bool {
         return self[keys] != nil
     }
