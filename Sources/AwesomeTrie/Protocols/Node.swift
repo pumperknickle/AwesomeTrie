@@ -17,11 +17,26 @@ public protocol Node: Codable {
     func excluding(keys: [Key]) -> Self?
     func subtree(keys: [Key]) -> Mapping<Key, Self>?
 	func overwrite(with node: Self) -> Self
+	func subtreeWithCover(keys: [Key], current: Value?) -> (Mapping<Key, Self>, Value?)?
     
     init(prefix: [Key], value: Value?, children: Mapping<Key, Self>)
 }
 
 public extension Node {
+	func subtreeWithCover(keys: [Key], current: Value?) -> (Mapping<Key, Self>, Value?)? {
+		let nextCurrent = value ?? current
+		if prefix.starts(with: keys) {
+            let suffix = prefix - keys
+            guard let firstSuffix = suffix.first else { return (children, nextCurrent) }
+            return (Mapping<Key, Self>().setting(key: firstSuffix, value: Self(prefix: suffix, value: value, children: children)), current)
+        }
+        if !keys.starts(with: prefix) { return nil }
+        let suffix = keys - prefix
+        let firstSuffix = suffix.first!
+        guard let child = children[firstSuffix] else { return nil }
+        return child.subtreeWithCover(keys: suffix, current: nextCurrent)
+	}
+	
     func getChild(_ key: Key) -> Self? {
         return children[key]
     }
