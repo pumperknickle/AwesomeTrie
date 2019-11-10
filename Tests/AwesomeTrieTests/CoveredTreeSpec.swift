@@ -28,6 +28,12 @@ final class CoveredTreeSpec: QuickSpec {
 			expect(secondTree.cover).to(equal(value2))
 			expect(thirdTree.cover).to(equal(value1))
 			expect(fourthTree.cover).to(equal(value3))
+            expect(coveredTree.contains(key: key1.first!)).to(beTrue())
+            expect(coveredTree.contains(key: "bar")).to(beFalse())
+            expect(firstTree.contains(key: key1.first!)).to(beFalse())
+            expect(firstTree.contains(key: "bar")).to(beTrue())
+            expect(firstTree.contains(key: "boo")).to(beFalse())
+            expect(thirdTree.contains(key: "bar")).to(beTrue())
 		}
 	}
 }

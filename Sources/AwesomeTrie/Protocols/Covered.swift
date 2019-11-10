@@ -13,6 +13,7 @@ public protocol Covered {
 	var cover: CoverType? { get }
 	
 	func subtreeWithCover(keys: [Key]) -> Self
+    func contains(key: Key) -> Bool
 	init(trie: TrieType, cover: CoverType?)
 }
 
@@ -23,4 +24,9 @@ public extension Covered {
 		guard let childResult = childNode.subtreeWithCover(keys: keys, current: cover) else { return Self(trie: TrieType(children: Mapping<Key, NodeType>()), cover: nil) }
 		return Self(trie: TrieType(children: childResult.0), cover: childResult.1)
 	}
+    
+    func contains(key: Key) -> Bool {
+        guard let childNode = trie.children[key] else { return false }
+        return childNode.get(keys: [key]) != nil
+    }
 }
