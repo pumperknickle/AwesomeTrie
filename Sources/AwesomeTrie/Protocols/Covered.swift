@@ -6,6 +6,7 @@ public protocol Covered {
 	associatedtype TrieType: Trie
 	
 	typealias Key = TrieType.Key
+    typealias Value = TrieType.Value
 	typealias CoverType = TrieType.Value
 	typealias NodeType = TrieType.NodeType
 	
