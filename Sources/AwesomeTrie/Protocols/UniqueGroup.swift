@@ -1,4 +1,5 @@
 import Foundation
+import AwesomeDictionary
 
 public protocol UniqueGroup: Trie where Value == Singleton {
     func contains(_ keys: [Key]) -> Bool
@@ -24,3 +25,29 @@ public extension UniqueGroup {
         return keySets()
     }
 }
+
+public extension UniqueGroup where Key == String {
+    init?(queryString: String) {
+        let tokens = Self.lexCharacters(queryString: queryString.removingAllWhitespacesAndNewlines()).combineCharacterTokens()
+        guard let firstToken = tokens.first else { return nil }
+        if firstToken != TrieToken.open { return nil }
+        guard let result = Mapping<Key, NodeType>().parse(tokens: Array(tokens.dropFirst())) else { return nil }
+        if !result.1.isEmpty { return nil }
+        self = Self(children: result.0)
+    }
+        
+    static func lexCharacters(queryString: String) -> [TrieToken] {
+        guard let firstChar = queryString.first else { return [] }
+        switch firstChar {
+        case ",":
+            return [.comma] + Self.lexCharacters(queryString: String(queryString.dropFirst()))
+        case "{":
+            return [.open] + Self.lexCharacters(queryString: String(queryString.dropFirst()))
+        case "}":
+            return [.close] + Self.lexCharacters(queryString: String(queryString.dropFirst()))
+        default:
+            return [.other(String(firstChar))] + Self.lexCharacters(queryString: String(queryString.dropFirst()))
+        }
+    }
+}
+

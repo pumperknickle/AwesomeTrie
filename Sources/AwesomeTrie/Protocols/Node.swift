@@ -193,3 +193,39 @@ extension Mapping where Key: BinaryEncodable, Value: Node {
 		}
 	}
 }
+
+public extension Mapping where Key == String, Value: Node, Value.Value == Singleton, Value.Key == String {
+    func parse(tokens: [TrieToken]) -> (Self, [TrieToken])? {
+        guard let firstToken = tokens.first else { return (self, []) }
+        switch firstToken {
+        case .close:
+            return (self, Array(tokens.dropFirst()))
+        case .other(let str):
+            guard let result = Value(prefix: [str], value: nil, children: Mapping<Key, Value>()).parse(tokens: Array(tokens.dropFirst())) else { return nil }
+            return setting(key: str, value: result.0).parse(tokens: result.1)
+        default:
+            return nil
+        }
+    }
+}
+
+public extension Node where Key == String, Value == Singleton {
+    func parse(tokens: [TrieToken]) -> (Self, [TrieToken])? {
+        guard let firstToken = tokens.first else { return nil }
+        switch firstToken {
+        case .open:
+            guard let result = children.parse(tokens: Array(tokens.dropFirst())) else { return nil }
+            return changing(children: result.0).parse(tokens: result.1)
+        case .comma:
+            guard let firstChild = children.first() else { return (self.changing(value: Singleton.void), Array(tokens.dropFirst())) }
+            if children.elements().count != 1 { return (self, Array(tokens.dropFirst())) }
+            return (firstChild.1.changing(prefix: prefix + firstChild.1.prefix), Array(tokens.dropFirst()))
+        case .close:
+            guard let firstChild = children.first() else { return (self.changing(value: Singleton.void), tokens) }
+            if children.elements().count != 1 { return (self, tokens) }
+            return (firstChild.1.changing(prefix: prefix + firstChild.1.prefix), tokens)
+        default:
+            return nil
+        }
+    }
+}
