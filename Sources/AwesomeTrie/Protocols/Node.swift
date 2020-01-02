@@ -3,7 +3,7 @@ import Bedrock
 import AwesomeDictionary
 
 public protocol Node: Codable {
-    associatedtype Key: BinaryEncodable
+    associatedtype Key: DataEncodable
     associatedtype Value: Codable
     
     var prefix: [Key]! { get }

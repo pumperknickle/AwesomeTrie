@@ -2,7 +2,7 @@ import Foundation
 import Bedrock
 import AwesomeDictionary
 
-public struct TrieSet<Key: BinaryEncodable>: Codable where Key: Codable {
+public struct TrieSet<Key: DataEncodable>: Codable where Key: Codable {
     private let rawChildren: Mapping<Key, NodeType>!
     
     public init(children: Mapping<Key, NodeType>) {
