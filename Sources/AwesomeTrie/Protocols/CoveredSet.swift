@@ -1,4 +1,5 @@
 import Foundation
+import AwesomeDictionary
 
 public protocol CoveredSet: Covered where Value == Singleton {
     func contains(_ keys: [Key]) -> Bool
