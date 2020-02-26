@@ -10,6 +10,7 @@ final class TrieMappingSpec: QuickSpec {
         let newMap = TrieMapping<String, Bool>()
         let key1 = ["foo"]
         let value1 = true
+        let value2 = false
         let key2 = ["foo", "bar"]
         let key3 = ["foo", "boo", "bar"]
         let map1 = newMap.setting(keys: key1, value: value1).setting(keys: key2, value: value1).setting(keys: key3, value: value1)
@@ -17,6 +18,13 @@ final class TrieMappingSpec: QuickSpec {
             let map1Data = try! JSONEncoder().encode(map1)
             let decodedMap = try! JSONDecoder().decode(TrieMapping<String, Bool>.self, from: map1Data)
             expect(decodedMap.keySets()).to(equal(map1.keySets()))
+        }
+        describe("resetting") {
+            it("shoud reset") {
+                let map2 = map1.setting(keys: key1, value: value2)
+                expect(map2[key1]).to(equal(value2))
+                expect(map2[key2]).to(equal(value1))
+            }
         }
         describe("setting and deleting") {
             let map2 = newMap.setting(keys: key2, value: value1).setting(keys: key1, value: value1).setting(keys: key3, value: value1)

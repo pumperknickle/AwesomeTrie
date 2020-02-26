@@ -18,6 +18,7 @@ public protocol Trie: Codable {
     func isEmpty() -> Bool
     func keySets() -> [[Key]]
     func values() -> [Value]
+    func contains(keys: [Key]) -> Bool
     func including(keys: [Key]) -> Self
     func excluding(keys: [Key]) -> Self
     func subtree(keys: [Key]) -> Self
@@ -58,6 +59,10 @@ public extension Trie {
             return changing(key: firstKey, node: NodeType(prefix: keys, value: value, children: Mapping<Key, NodeType>()))
         }
         return changing(key: firstKey, node: childNode.setting(keys: keys, to: value))
+    }
+    
+    func contains(keys: [Key]) -> Bool {
+        return self[keys] != nil
     }
     
     func deleting(keys: [Key]) -> Self {
