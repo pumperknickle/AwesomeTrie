@@ -70,7 +70,7 @@ public extension Trie {
         guard let childNode = getRoot(key: firstKey) else { return self }
         return changing(key: firstKey, node: childNode.deleting(keys: keys))
     }
-    
+        
     func keySets() -> [[Key]] {
         return children.values().map { $0.allKeys(keys: []) }.reduce([], +)
     }
@@ -118,6 +118,12 @@ public extension Trie {
 	}
 	
 	func overwrite(with trie: Self) -> Self {
-		return Self(children: children.overwrite(with: trie.children))
+        return merge(with: trie) { (left, right) -> Value in
+            return right
+        }
 	}
+    
+    func merge(with trie: Self, combine: (Value, Value) -> Value) -> Self {
+        return Self(children: children.merge(with: trie.children, combine: combine))
+    }
 }
