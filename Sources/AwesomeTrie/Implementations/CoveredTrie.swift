@@ -2,7 +2,7 @@ import Foundation
 import Bedrock
 import AwesomeDictionary
 
-public struct CoveredTrie<Key: DataEncodable, Value: Codable>: Codable {
+public struct CoveredTrie<Key: DataEncodable, Value: Codable> {
 	private let rawTrie: TrieType!
 	private let rawCover: CoverType?
 	

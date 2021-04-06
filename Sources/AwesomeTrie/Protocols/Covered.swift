@@ -2,7 +2,7 @@ import Foundation
 import Bedrock
 import AwesomeDictionary
 
-public protocol Covered {
+public protocol Covered: Codable {
 	associatedtype TrieType: Trie
 	
 	typealias Key = TrieType.Key

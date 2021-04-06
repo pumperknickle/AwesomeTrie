@@ -4,7 +4,7 @@ import AwesomeDictionary
 
 public protocol Trie: Codable {
     associatedtype Key
-    associatedtype Value
+    associatedtype Value: Codable
     associatedtype NodeType: Node where NodeType.Value == Value, Key == NodeType.Key
     
     typealias Element = ([Key], Value)
