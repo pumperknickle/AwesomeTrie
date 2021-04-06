@@ -14,13 +14,13 @@ public struct TrieNode<Key: DataEncodable, Value: Codable>: Codable {
     }
 }
 
-public enum CodingKeys: String, CodingKey {
-    case prefix
-    case value
-    case children
-}
-
 extension TrieNode: Node {
+    public enum CodingKeys: String, CodingKey {
+        case prefix
+        case value
+        case children
+    }
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let prefix = try container.decode(String.self, forKey: .prefix)

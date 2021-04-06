@@ -17,4 +17,22 @@ extension CoveredTrie: Covered {
 	
 	public var trie: TrieType! { return rawTrie }
 	public var cover: CoverType? { return rawCover }
+    
+    public enum CodingKeys: String, CodingKey {
+        case trie
+        case cover
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let trie = try container.decode(TrieType.self, forKey: .trie)
+        let cover = try container.decode(CoverType.self, forKey: .cover)
+        self.init(trie: trie, cover: cover)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(rawTrie, forKey: .trie)
+        if let cover = rawCover { try container.encode(cover, forKey: .cover) }
+    }
 }
