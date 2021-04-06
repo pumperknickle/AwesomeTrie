@@ -18,7 +18,7 @@ extension CoveredTrie: Covered {
 	public var trie: TrieType! { return rawTrie }
 	public var cover: CoverType? { return rawCover }
     
-    public enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case trie
         case cover
     }

@@ -15,7 +15,7 @@ public struct TrieNode<Key: DataEncodable, Value: Codable>: Codable {
 }
 
 extension TrieNode: Node {
-    public enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case prefix
         case value
         case children
