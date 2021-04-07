@@ -26,7 +26,7 @@ extension TrieNode: Node {
         let prefix = try container.decode(String.self, forKey: .prefix)
         let keys: [Key]? = prefix.decodeHex()
         if keys == nil { throw DecodingError.dataCorruptedError(forKey: CodingKeys.prefix, in: container, debugDescription: "Prefix corrupted") }
-        let value = try container.decode(Value.self, forKey: .value)
+        let value = try? container.decode(Value.self, forKey: .value)
         let children = try container.decode(Mapping<Key, TrieNode<Key, Value>>.self, forKey: .children)
         self.init(prefix: keys!, value: value, children: children)
     }

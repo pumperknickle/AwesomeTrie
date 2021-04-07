@@ -26,7 +26,7 @@ extension CoveredTrie: Covered {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let trie = try container.decode(TrieType.self, forKey: .trie)
-        let cover = try container.decode(CoverType.self, forKey: .cover)
+        let cover = try? container.decode(CoverType.self, forKey: .cover)
         self.init(trie: trie, cover: cover)
     }
 
