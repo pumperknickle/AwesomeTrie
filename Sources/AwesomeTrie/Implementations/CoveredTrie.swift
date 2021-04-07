@@ -33,6 +33,6 @@ extension CoveredTrie: Covered {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(rawTrie, forKey: .trie)
-        if let cover = rawCover { try container.encode(cover, forKey: .cover) }
+        try container.encodeIfPresent(rawCover, forKey: .cover) 
     }
 }

@@ -34,7 +34,7 @@ extension TrieNode: Node {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(rawPrefix.toHexArray(), forKey: .prefix)
-        if let value = value { try container.encode(value, forKey: .value) }
+        try container.encodeIfPresent(rawValue, forKey: .value)
         try container.encode(children, forKey: .children)
     }
     
